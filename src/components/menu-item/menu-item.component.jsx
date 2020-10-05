@@ -23,4 +23,4 @@ const MenuItem = (
   </div>
 );
 
-export default withRouter(MenuItem); //withRouter returns component with history.
+export default withRouter(MenuItem); //withRouter is a HOC (higher order component for cross cutting concenrns) returns component with history. HOC is take argument as component and return with extra features like, props.
