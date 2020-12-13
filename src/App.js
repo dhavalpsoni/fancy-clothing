@@ -6,7 +6,7 @@ import ShopPage from "./pages/shop/shop.component";
 import Header from "./components/header/header.component";
 import SignInAndSignPage from "./pages/sign-in-and-sign-up/sign-in-and-sign-up.component";
 //import { render } from "node-sass";
-import { auth } from "./firebase/firebase.util";
+import { auth, createUserProfileDocument } from "./firebase/firebase.util";
 
 // react-router-dom for router.  "Link" for redirect and re-render page from html.  <Link to="/topic">topic</Link>
 // "History" to redirect from JS. props.history.push('/topic');
@@ -24,10 +24,18 @@ class App extends React.Component {
   unsubscribeFromAuth = null;
 
   componentDidMount() {
-    this.unsubscribeFromAuth = auth.onAuthStateChanged((user) => {
-      this.setState({ currentUser: user });
+    this.unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
+      if (userAuth) {
+        const userRef = await createUserProfileDocument(userAuth);
 
-      console.log(user);
+        userRef.onSnapshot((snapshot) => {
+          this.setState({
+            currentUser: userAuth,
+            id: snapshot.id,
+            ...snapshot.data(),
+          });
+        });
+      }
     });
   }
 
